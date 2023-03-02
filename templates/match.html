@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="/static/css/match.css" rel="stylesheet" type="text/css" media="all">
+    <link href='https://fonts.googleapis.com/css?family=Domine' rel='stylesheet'>
+    <link href='https://fonts.googleapis.com/css?family=M PLUS Rounded 1c' rel='stylesheet'>
+</head>
+<body>
+    {% include "header.html" %}
+    <div class="match-container">
+        <div class="match-title">
+            <p>Match Two Friends</p>
+        </div>
+        <div class="select-friend-table">
+            <div class="friend-1-table">
+                <table>
+                    <p class="friend-title">Friend 1</p>
+                    <select id="myform-friend1" name='category' multiple class="form-control">
+                        {% for friend in my_friends: %}
+                        <option class="friend-item" value={{friend[2]}} selected>{{friend[0] + ' ' + friend[1]}}</option>
+
+                        {% endfor %}
+                    </select>
+                </table>
+            </div>
+            <div class="match-button">
+                <img src="static/heart-png-15.png" onclick="match()">
+            </div>
+            <div class="friend-2-table">
+                <table>
+                    <p class="friend-title">Friend 2</p>
+                    <select id="myform-friend2" name='category' multiple class="form-control">
+                    </select>
+                    <div class="recommendations-button">
+                        <button onclick="find_recommendations()">Find Recommendations</button>
+                    </div>
+                </table>
+            </div>
+        </div>
+
+    <script src= "https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        'use strict';
+        $(function() {
+            $("#myform-friend1").change(function(){
+            var e = document.getElementById("myform-friend1");
+            var match1_username = e.options[e.selectedIndex].value;
+            recommendations = getRecommendations(match1_username);
+            console.log(match1_username);
+            });
+        });
+
+        function find_recommendations(match1_username){
+            var e = document.getElementById("myform-friend1");
+            var match1_username = e.options[e.selectedIndex].value;
+            let request = null;
+
+            request = $.ajax({
+                url: '/match',
+                type: 'POST',
+                data: {
+                    'type_of_post': 'get_recommendations',
+                    'match1_username': match1_username
+                },
+                success: handleResponse
+            });
+        }
+        function handleResponse(response){
+            $('#myform-friend2').html(response);
+        }
+
+        function get_match_results(match1_username, match2_username) {
+            console.log("does this work");
+            let request = null;
+            request = $.ajax({
+                url: '/match',
+                type: 'POST',
+                data: {
+                    'type_of_post': 'get_match_results',
+                    'match1_username': match1_username,
+                    'match2_username': match2_username
+                },
+                success: handleMatchResponse
+            });
+
+        }
+        function handleMatchResponse(response){
+            $('#myform-friend2').html(response);
+            $('#match-message').html('SUCCESSFUL MATCH!');
+
+            console.log(response);
+        }
+
+        function match() {
+            var e = document.getElementById("myform-friend1");
+            var match1_username = e.options[e.selectedIndex].value;
+            var e = document.getElementById("myform-friend2");
+            var match2_username = e.options[e.selectedIndex].value;
+            get_match_results(match1_username, match2_username);
+        }
+    $('document').ready(setup);
+
+    </script>
+</body>
+</html>

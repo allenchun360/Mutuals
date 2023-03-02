@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link href="/static/css/inbox.css" rel="stylesheet" type="text/css" media="all">
+        <link href='https://fonts.googleapis.com/css?family=Domine' rel='stylesheet'>
+        <link href='https://fonts.googleapis.com/css?family=M PLUS Rounded 1c' rel='stylesheet'>
+    </head>
+    <body>
+        {% include "header.html" %}
+        <div class="inbox-title">
+            <p>Inbox</p>
+        </div>
+        <div class="inbox-container">
+            <div class="pending">
+                <div class="pending-title">
+                    <p>Potential Matches</p>
+                <div>
+                <div class="pending-table">
+                    <table>
+                        <thead>
+                            {% for match in inbox_data %}
+                                {% if match[1] is none %}
+                                    <tr>
+                                        <td>{{match[3]}} {{match[4]}}</td>
+                                        <td><a href="/view_profile?match={{match[0]}}">View Profile</a></td>
+                                        <form name="match" action="{{ url_for('inbox') }}" method="POST">
+                                            <td><label><input type="radio" name="Status" value="Accept" id="Accept">Accept</label></td>
+                                            <td><label><input type="radio" name="Status" value="Decline" id="Decline">Decline</label></td>
+                                            <td><button type=”submit” name="potential_match" value="{{match[0]}}">Submit</button></td>
+                                        </form>
+                                    </tr>
+                                {%endif%}
+                            {% endfor %}
+                        </thead>
+                    </table>
+                </div>
+            </div>
+            <div class="pending">
+                <div class="pending-title">
+                    <p>Awaiting Response from Match</p>
+                <div>
+                <table id="pending-table">
+                    <thead>
+                        {% for match in inbox_data %}
+                            {% if match[1] == 1 and match[2] is none %}
+                                <tr>
+                                    <td>{{match[3]}} {{match[4]}}</td>
+                                    <td><a href="/view_profile?match={{match[0]}}">View Profile</a></td>
+                                </tr>
+                            {%endif%}
+                        {% endfor %}
+                    </thead>
+                </table>
+            </div>
+            <div class="pending">
+                <div class="pending-title">
+                    <p>Matches</p>
+                <div>
+                <table id="pending-table">
+                    <thead>
+                        {% for match in inbox_data %}
+                            {% if match[1] == 1 and match[2] == 1 %}
+                                <tr>
+                                    <td>{{match[3]}} {{match[4]}}</td>
+                                    <td><a href="/view_profile?match={{match[0]}}">View Profile</a></td>
+                                    <td>Contact: {{match[5]}}</td>
+                                </tr>
+                            {%endif%}
+                        {% endfor %}
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </body>
+</html>
